@@ -1,5 +1,4 @@
-# Golang notes
-Following notes come from my personal experience writing golang apps.
+# Goify
 
 
 ## App struct
