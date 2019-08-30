@@ -54,6 +54,21 @@ func (b *BookServer) IsAdmin(next http.HandlerFunc) http.HandlerFunc {
     }
 }
 ```
+
+## Context is a great data container
+contexts are a great a way of having propagation of goroutines but they have another great ability, they can hold data in them as well.
+imagin you have a middleware that checks for user identity, so it will query database for user, and you are going too need that data later, you can simply change request and put it in request context as below:
+```go
+func (b *BookServer) CheckUserIdentity(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        //get user identity from db
+        // changing request context to a new context with user identity
+        r = r.WithContext(context.WithValue(r.Context(), "ident", /*user identity*/))
+        next(w, r)
+    }
+}
+```
+
 ## DRY is good but not always
 creating abstraction over a repititive code that you write most of the times is good but in my experience some times it's easier to have a code that is copied few times, to have a abstraction that is either complex and unreadable or has overhead.
 
