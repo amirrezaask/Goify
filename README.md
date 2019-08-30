@@ -1,5 +1,5 @@
 # Golang notes
-Following notes come from my personal experience writing golang web services.
+Following notes come from my personal experience writing golang apps.
 
 
 ## App struct
@@ -27,7 +27,7 @@ type OrderServer struct {
 
 
 ## Controllers vs Handlers
-In other languages and frameworks we have the concept of controllers as the entry point for our apps but in go our application entry are handlers, handlers are usually simple functions that satisfy `http.HandlerFunc`, but this handlers are simple functions so you don't have DI, so you need to do every thing in them, even middleware functionality, of course if you use frameworks like (Echo)[http://github.com/labstack/echo] they give you some syntax to make your handlers more clean but we can implement them using StdLib as well,
+In other languages and frameworks we have the concept of controllers as the entry point for our apps but in go our application entry are handlers, handlers are usually simple functions that satisfy `http.HandlerFunc`, but this handlers are simple functions so you don't have DI, so you need to do every thing in them, even middleware functionality, of course if you use frameworks like [Echo](http://github.com/labstack/echo) they give you some syntax to make your handlers more clean but we can implement them using StdLib as well,
 In my opinion Controllers in golang are methods on the server struct which would return handlers and handlers are `http.HandlerFunc`.
 ### Example:
 ```go
@@ -41,7 +41,7 @@ func (b *BookServer) GetBook() http.HandlerFunc {
 } 
 ```
 ## Middlewares
-There are libraries that implement middlewares, or even routers like (gorrila/mux)[http://github.com/gorrila/mux] that support middlewares outside the box, but I like to look at middlewares even simpler, middlewares are just functions that run some logic before/after request being handled by router so let's do exactly this in our code.
+There are libraries that implement middlewares, or even routers like [gorrila/mux](http://github.com/gorrila/mux) that support middlewares outside the box, but I like to look at middlewares even simpler, middlewares are just functions that run some logic before/after request being handled by router so let's do exactly this in our code.
 ```go
 func (b *BookServer) IsAdmin(next http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
