@@ -54,3 +54,6 @@ func (b *BookServer) IsAdmin(next http.HandlerFunc) http.HandlerFunc {
     }
 }
 ```
+## DRY is good but not always
+creating abstraction over a repititive code that you write most of the times is good but in my experience some times it's easier to have a code that is copied few times, to have a abstraction that is either complex and unreadable or has overhead.
+
