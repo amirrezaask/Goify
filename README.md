@@ -75,7 +75,16 @@ creating abstraction over a repititive code that you write most of the times is 
 When you are reading code, it's nice to see all logic sequentialy following each other, program flow should not be indented into conditions, unless you are handling an edge case or error scenario. 
 
 ## Be liberal in what you accept, and be conservative in what you return
-TBA
+when writing a function always accept parameters that are generic and abstract like interfaces, because they are so much easier to mock
+and always return concrete types again because they are much simpler to assert in tests.
+```go
+func WriteToFile(f *os.File) {} // Wrong: when testing this function creating a os.File is too expensive
+
+func WriteToFile(w io.Writer) {} // Good: when testing this function it's really easy to create io.Pipe and pass pipeWriter to this function and assert on reader
+
+```
+
+another thing about passing an interface is that an interface some how shows us what this functions is going to do, forexample in above when we are passing a file we really don't know what this function is going to do with this file, maybe it's going to read content, maybe write something, maybe append something we don't know, but in second function we exactly know that this function is going to write on the interface we are passing to it.
 
 ## Initialize only when you need to
 golang has multiple ways of defining and initializing variables, like `:=` and `var`, don't always use them interchangably, if you want to only define a variable but you want to intialize it later, use `var` and if you want to define and initialize use `:=`, don't use `:=` all the time.
