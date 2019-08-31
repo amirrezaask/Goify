@@ -72,7 +72,7 @@ func (b *BookServer) CheckUserIdentity(next http.HandlerFunc) http.HandlerFunc {
 creating abstraction over a repititive code that you write most of the times is good but in my experience some times it's easier to have a code that is copied few times, to have a abstraction that is either complex and unreadable or has overhead.
 
 ## Always stick to left
-When you are reading code, it's always nice to be able to see code that would be execute
+When you are reading code, it's nice to see all logic sequentialy following each other, program flow should not be indented into conditions, unless you are handling an edge case or error scenario. 
 
 ## Be liberal in what you accept, and be conservative in what you return
 TBA
