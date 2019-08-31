@@ -72,22 +72,43 @@ func (b *BookServer) CheckUserIdentity(next http.HandlerFunc) http.HandlerFunc {
 creating abstraction over a repititive code that you write most of the times is good but in my experience some times it's easier to have a code that is copied few times, to have a abstraction that is either complex and unreadable or has overhead.
 
 ## Always stick to left
-TBA
+When you are reading code, it's always nice to be able to see code that would be execute
 
 ## Be liberal in what you accept, and be conservative in what you return
 TBA
 
 ## Initialize only when you need to
-TBA
+golang has multiple ways of defining and initializing variables, like `:=` and `var`, don't always use them interchangably, if you want to only define a variable but you want to intialize it later, use `var` and if you want to define and initialize use `:=`, don't use `:=` all the time.
+```go
+//not good
+model := Model{}
+
+err := json.Unmarshall(data, &model)
+if err != nil {
+    return fmt.Errorf("error in unmarshalling json: %v", err)
+}
+
+//good
+var model Model
+
+err := json.Unmarshall(data, &model)
+if err != nil {
+    return fmt.Errorf("error in unmarshalling json: %v", err)
+}
+
+``` 
+like above example when you want to forexample pass pointer of a variable to be the destination of a data, just define it and not initialize it
+
 
 ## const when possible, var when necessary
-TBA
+constatns are one of the few ways we can approach immutability in golang, they are super fast so use them in every place you can. 
 
-## expected errors should be expected (create error types)
-TBA
+## expected errors should be expected
+if you are writing a package, let's say a bank api interface for golang, always for expected error types like connection problems or domain specific errors create error types so that user of that 
+package be able to assert different error types. another thing is to always define your errors as consts and not vars because they are exported and it's really easy to mess up with them so make them const and immutable.
 
 ## table driven tests
-TBA
+
 
 ## don't name vars after what they are, name them after what they do
 TBA
