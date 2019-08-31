@@ -110,14 +110,37 @@ like above example when you want to forexample pass pointer of a variable to be 
 
 
 ## const when possible, var when necessary
-constatns are one of the few ways we can approach immutability in golang, they are super fast so use them in every place you can. 
+constatns are one of the few ways we can approach immutability in golang, they are super fast so use them in every place you can. When you define a constant you are helping go-compiler a lot, with a constant compiler knows that this value is not going to change through the entier program so it can do so many optimizations around it, another thing is when you are working in concurrent programs it's so good to avoid sharing some data that can be manipulated by multiple goroutines. 
 
 ## expected errors should be expected
 if you are writing a package, let's say a bank api interface for golang, always for expected error types like connection problems or domain specific errors create error types so that user of that 
 package be able to assert different error types. another thing is to always define your errors as consts and not vars because they are exported and it's really easy to mess up with them so make them const and immutable.
 
 ## table driven tests
+it's good practice to find all parameters that can change a function behaviour and create a type holding all those parameters and then test the function with different values for those params.
+```go
+func TestSum(t *testing.T) {
+    tt:=map[string]struct{
+        x,y,exp int
+    }{
+        "simple math 2+3=5": {
+            2,3,5
+        },
+        "simple math 2+0=2": {
+            2,2,2
+        }
+    }
+    for sc,tc:=range tt{
+        res:=Sum(tc.x,tc.y)
+        if res != tc.exp{
+            t.Errorf("Scenario %s faild, expected:%v got:%v", sc,tc.exp, res)
+        }
+    }
 
+}
+
+```
+another good practice is to name your test scenarios, it'll help you a lot when debugging.
 
 ## don't name vars after what they are, name them after what they do
 TBA
