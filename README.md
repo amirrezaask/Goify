@@ -72,7 +72,44 @@ func (b *BookServer) CheckUserIdentity(next http.HandlerFunc) http.HandlerFunc {
 creating abstraction over a repititive code that you write most of the times is good but in my experience some times it's easier to have a code that is copied few times, to have a abstraction that is either complex and unreadable or has overhead.
 
 ## Always stick to left
-When you are reading code, it's nice to see all logic sequentialy following each other, program flow should not be indented into conditions, unless you are handling an edge case or error scenario. 
+When you are reading code, it's nice to see all logic sequentialy following each other, program flow should not be indented into conditions, unless you are handling an edge case or error scenario.
+```go
+// hard to follow
+func someErrorProneFunction(x, y int) (int,error) {
+    r, err := redis()
+    if err == nil {
+        err = r.Set(x, y)
+        if err == nil {
+            z, err := r.Get(x)
+            if err == nil {
+                return z, nil
+            }
+            return 0, err
+        }
+        return err
+    }
+    return err
+}
+// more simple version
+func someErrorProneFunction(x, y int) (int, error) {
+    r, err := redis()
+    if err != nil {
+      return 0, err  
+    }
+    err = r.Set(x, y)
+    if err != nil {
+        return 0, err
+    }
+    z, err := r.Get(x)
+    if err != nil {
+        return 0, err
+    }
+    return z, nil
+
+}
+
+
+```
 
 ## Be liberal in what you accept, and be conservative in what you return
 when writing a function always accept parameters that are generic and abstract like interfaces, because they are so much easier to mock
@@ -81,6 +118,8 @@ and always return concrete types again because they are much simpler to assert i
 func WriteToFile(f *os.File) {} // Wrong: when testing this function creating a os.File is too expensive
 
 func WriteToFile(w io.Writer) {} // Good: when testing this function it's really easy to create io.Pipe and pass pipeWriter to this function and assert on reader
+
+func WriteToFile(rwc io.ReadWriteCloser) {} // Not Good: we don't know exactly what this function is going todo, is it going to close writer? is it going to read ? we don't know.
 
 ```
 
@@ -143,4 +182,13 @@ func TestSum(t *testing.T) {
 another good practice is to name your test scenarios, it'll help you a lot when debugging.
 
 ## don't name vars after what they are, name them after what they do
-TBA
+Don't have a variable named forexample usersMap, don't put type of variables in their name, good name for a variable shows what that variable is used for. forexample:
+```go
+package user
+var usersMap map[int]*User // not good, if we look at the variable name we cannot understand what it is doing
+
+var usersRepository map[int]*User // better but we are defining this variable in user package so we already know that this is users repository
+
+var Repository map[int]*User // probably best soloution
+
+```
