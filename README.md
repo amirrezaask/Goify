@@ -213,7 +213,7 @@ type Animal interface {
     Go()
     Stay()
 } // too fat interface
-func AnimalManager(a Animal) // we don't know exactly what this functional is going to do with the animal
+func AnimalManager(a Animal) {} // we don't know exactly what this functional is going to do with the animal
 
 //good
 type Eater interface {
