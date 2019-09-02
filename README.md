@@ -201,3 +201,24 @@ var Repository map[int]*User // probably best soloution
 
 ## Smaller the interface, better
 make your interfaces as small as possible, interfaces meant to be a way to focus on similarities of types in functionality, when you create a fat interface, first of all it's hard to implement it, and then it complicates the code that is using that interface because from outside it's not clear that forexample a function uses which one of methods in that interface
+
+```go
+
+//not good
+type Animal interface {
+    Breath()
+    Eat()
+    Die()
+    Sleep()
+    Go()
+    Stay()
+} // too fat interface
+func AnimalManager(a Animal) // we don't know exactly what this functional is going to do with the animal
+
+//good
+type Eater interface {
+    Eat()
+}
+func AnimalManager(e Eater) {} // now we exactly know that this function has only one option of calling the Eat() method, we can mock/Patch method with out even looking at function body
+
+```
