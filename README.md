@@ -125,6 +125,12 @@ func WriteToFile(rwc io.ReadWriteCloser) {} // Not Good: we don't know exactly w
 
 another thing about passing an interface is that an interface some how shows us what this functions is going to do, forexample in above when we are passing a file we really don't know what this function is going to do with this file, maybe it's going to read content, maybe write something, maybe append something we don't know, but in second function we exactly know that this function is going to write on the interface we are passing to it.
 
+```go
+func NewRecorder() io.Writer // not good because we don't know what is the exact type behind io.Writer, this could cause problem
+func NewRecorder() *os.File // good we know exactly that this function is opening/creating a file
+
+```
+
 ## Initialize only when you need to
 golang has multiple ways of defining and initializing variables, like `:=` and `var`, don't always use them interchangably, if you want to only define a variable but you want to intialize it later, use `var` and if you want to define and initialize use `:=`, don't use `:=` all the time.
 ```go
@@ -192,3 +198,6 @@ var usersRepository map[int]*User // better but we are defining this variable in
 var Repository map[int]*User // probably best soloution
 
 ```
+
+## Smaller the interface, better
+make your interfaces as small as possible, interfaces meant to be a way to focus on similarities of types in functionality, when you create a fat interface, first of all it's hard to implement it, and then it complicates the code that is using that interface because from outside it's not clear that forexample a function uses which one of methods in that interface
