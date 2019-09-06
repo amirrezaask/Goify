@@ -222,3 +222,23 @@ type Eater interface {
 func AnimalManager(e Eater) {} // now we exactly know that this function has only one option of calling the Eat() method, we can mock/Patch method with out even looking at function body
 
 ```
+
+
+## Don't tell exactly what you want, describe it
+
+when writing a pkg or an exposed function instead of asking for a concrete type, ask for an abstraction that describes what you are going to do with that value.
+```go
+type CacheConn struct {
+    // some unnecessary detail
+}
+func UpdateCache(c *CacheConn) {} // in this function outside world needs to create a cache connection and then pass it to us, and in case of unit tests we need some cache connection only for test and that is not good
+
+
+type Cache interface {
+    Update(key string, data interface{}) error
+}
+
+func UpdateCache() {} // better, now for unit test we can easily create a stub/mock of this interface. 
+
+```
+remember when writing functions that accepts only interfaces, you should make your interfaces as small as possible
