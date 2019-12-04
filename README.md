@@ -23,22 +23,19 @@ type OrderServer struct {
     bankService bankInterface
 }
 ```
+## Handlers are better when they are closures
+in Go http handlers (in stdlib, but third party libs are not that different) should be of a specific type, forexample: func(w http.ResponseWriter, req \*http.Request), so with this function signature you can't pass any external dependencies to it like database connections or logger or any thing else, on way to do such thing is to wrap this handler in a parent function which accepts what ever you want.
 
-
-## Controllers vs Handlers
-In other languages and frameworks we have the concept of controllers as the entry point for our apps but in go our application entry are handlers, handlers are usually simple functions that satisfy `http.HandlerFunc`, but this handlers are simple functions so you don't have DI, so you need to do every thing in them, even middleware functionality, of course if you use frameworks like [Echo](http://github.com/labstack/echo) they give you some syntax to make your handlers more clean but we can implement them using StdLib as well,
-In my opinion Controllers in golang are methods on the server struct which would return handlers and handlers are `http.HandlerFunc`.
-### Example:
 ```go
-func (b *BookServer) GetBook() http.HandlerFunc {
-    // you can initialize vars here....
-    // do loging or anything
-    // notice that all code you write here calls every time you access this controller
+func requestHandler(someDB *sql.DB) func(w http.ResponseWriter, r *http.Request) {
     return func(w http.ResponseWriter, r *http.Request) {
-        //your logic
+        // do handler logic
     }
-} 
+}
+
 ```
+benefit of this strategy in comparison with above solution (App struct) is that app struct of course handles all kind of dependency but has the overhead of having all deps in a handler whether it's going to need it or not, and probably in some edge cases like stateful application it may cause data race, but this pattern only copies the deps we actually going too need in handler because we said so, it's more explicit, and it's more concurrency friendly.
+
 ## Middlewares
 There are libraries that implement middlewares, or even routers like [gorrila/mux](http://github.com/gorrila/mux) that support middlewares outside the box, but I like to look at middlewares even simpler, middlewares are just functions that run some logic before/after request being handled by router so let's do exactly this in our code.
 ```go
@@ -242,3 +239,9 @@ func UpdateCache() {} // better, now for unit test we can easily create a stub/m
 
 ```
 remember when writing functions that accepts only interfaces, you should make your interfaces as small as possible
+
+## Reflect is Evil, but a necessary one
+for go developers, reflect package is like sun to vampires. but at least in my experience some times reflect package is the best way to implement a generic solution. reflect package has overhead, maybe some times it increases the complexity but as I said it's the necassary evil, an evil package that golang programs need to survive. stdlib uses reflect too, forexample json marshal/unmarshal uses reflect package to read struct tags, so it's not some thing that you never should touch, but it's some thing you need to be carefull when using, because of overhead and some times complexity.
+
+
+
